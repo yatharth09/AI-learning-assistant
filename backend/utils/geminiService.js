@@ -167,9 +167,8 @@ Document:
     const payload = { model: "gemini-2.5-flash-lite", contents: prompt}
     const raw = await ai.models.generateContent(payload)
     const rawText = raw.text
-    const summary = parseResponseText(rawText).trim()
-    if (!summary) throw new Error("Model returned an empty summary")
-    return summary
+    if (!rawText) throw new Error("Model returned an empty summary")
+    return rawText
 }
 
 /**
@@ -194,5 +193,48 @@ Context:
     const raw = await ai.models.generateContent(payload)
     const text = raw.text
     if (!text) throw new Error("Model returned an empty explanation")
+    return text
+}
+
+/**
+ * Chat with document context
+ * @param {string} question - User question
+ * @param {Array<Object|string>} chunks - Relevant document chunks (objects with `.text`/`.content` or plain strings)
+ * @returns {Promise<string>}
+ */
+export async function chatWithDocument(question, chunks) {
+    if (typeof question !== "string" || !question.trim()) throw new Error("question must be a non-empty string")
+    if (!Array.isArray(chunks) || chunks.length === 0) throw new Error("chunks must be a non-empty array")
+
+    const normalizeChunk = (c, idx) => {
+        if (typeof c === "string") return c
+        if (c && typeof c === "object") return String(c.text || c.content || c.chunk || c.body || `{"chunkIndex":${idx}}`)
+        return String(c)
+    }
+
+    const doc = chunks.map((c, i) => `Chunk ${i + 1}:\n${normalizeChunk(c, i)}`).join("\n\n")
+
+    const safeDoc = doc.replace(/`/g, "'")
+    const safeQuestion = question.replace(/`/g, "'")
+
+    const prompt = `
+You are an assistant that answers a user's question using only the information present in the provided document chunks.
+Answer the question concisely and directly. If the answer cannot be determined from the provided chunks, respond: "I don't know based on the provided documents."
+When stating facts, cite the chunk number(s) in parentheses after the sentence (e.g., (Chunk 2)). Keep the answer to at most three sentences. Return plain text only (no JSON, lists, or metadata).
+
+Question:
+"""${safeQuestion}"""
+
+Document chunks:
+"""${safeDoc}"""
+`
+
+    const payload = { model: "gemini-2.5-flash-lite", contents: prompt }
+    
+    const raw = await ai.models.generateContent(payload)
+    const text = raw.text
+    
+
+    if (!text) throw new Error("Model returned an empty response")
     return text
 }

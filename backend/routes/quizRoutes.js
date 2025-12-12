@@ -1,11 +1,16 @@
 import express from "express"
-import protect from "../middleware/auth"
+import protect from "../middleware/auth.js"
+import {getQuiz, getQuizById, submitQuiz, getQuizResults, deleteQuiz} from '../controllers/quizController.js'
 
 
 const router = express.Router()
 
 router.use(protect)
 
-router.get('')
+router.get('/:documentId', getQuiz);
+router.get('/quiz/:id', getQuizById);
+router.post('/:id/submit', submitQuiz );
+router.put('/:id/result', getQuizResults);
+router.delete('/:id', deleteQuiz);
 
 export default router
