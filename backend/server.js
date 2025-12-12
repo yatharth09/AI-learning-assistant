@@ -7,7 +7,8 @@ import { fileURLToPath } from 'url';
 import errorHandler from './middleware/errorHandler.js';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
-import documentRoutes from './routes/documentRoutes.js'
+import documentRoutes from './routes/documentRoutes.js';
+import flashcardRoutes from './routes/flashcardRoutes.js';
 
 
 
@@ -33,7 +34,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
-// app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/flashcards', flashcardRoutes);
 // app.use('/api/quiz', quizRoutes);
 
 
