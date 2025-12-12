@@ -13,7 +13,7 @@
  * @param {number} overlap - Number of words to overlap between chunks
  * @returns {Array<{content: string, chunkIndex:number, pageNumber:number}>}
  */
-function chunkText(text, chunkSize = 200, overlap = 50) {
+export function chunkText(text, chunkSize = 100, overlap = 25) {
     if (!text || typeof text !== 'string') return [];
     chunkSize = Math.max(1, Math.floor(chunkSize));
     overlap = Math.max(0, Math.floor(overlap));
@@ -46,7 +46,7 @@ function chunkText(text, chunkSize = 200, overlap = 50) {
  * @param {number} maxChunks - max chunks to return
  * @returns {Array<Object>}
  */
-function findRelevantChunks(chunks = [], query = '', maxChunks = 5) {
+export function findRelevantChunks(chunks = [], query = '', maxChunks = 10) {
     if (!Array.isArray(chunks) || chunks.length === 0) return [];
     if (!query || typeof query !== 'string') return chunks.slice(0, Math.max(0, maxChunks));
 
@@ -82,7 +82,3 @@ function findRelevantChunks(chunks = [], query = '', maxChunks = 5) {
     return scored.slice(0, Math.max(0, maxChunks)).map(s => s.chunk);
 }
 
-module.exports = {
-    chunkText,
-    findRelevantChunks,
-};

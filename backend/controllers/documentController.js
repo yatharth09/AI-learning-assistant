@@ -1,6 +1,6 @@
-import Document from "../models/Document";
-import Flashcard from "../models/Flashcard";
-import Quiz from "../models/Quiz";
+import Document from "../models/Document.js";
+import Flashcard from "../models/Flashcard.js";
+import Quiz from "../models/Quiz.js";
 import { extractTextFromPDF } from "../utils/pdfParser.js";
 import { chunkText } from "../utils/textChunker.js";
 import fs from 'fs/promises';
@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 
 
 
-const getDocuments = async (req, res, next) => {
+export const getDocuments = async (req, res, next) => {
 
     try{
         const documents = await Document.aggregate([
@@ -26,7 +26,7 @@ const getDocuments = async (req, res, next) => {
             },
             {
                 $lookup: {
-                    from: 'quiz',
+                    from: 'quizzes',
                     localField: "_id",
                     foreignField: 'documentId',
                     as: 'quiz'
@@ -34,7 +34,7 @@ const getDocuments = async (req, res, next) => {
             },
             {
                 $addFields:{
-                    flashCardCount: {$size: '$flashcardSets'},
+                    flashcardCount: {$size: '$flashcardSets'},
                     quizCount: {$size: "$quiz"}
                 }
             },
@@ -53,7 +53,7 @@ const getDocuments = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            count: document.length,
+            count: documents.length,
             data: documents
         })
 
@@ -68,7 +68,7 @@ const processPDF = async (documentId, filePath) => {
         const {text} = await extractTextFromPDF(filePath);
         const chunks = chunkText(text, 500, 50);
 
-        await Document.findByIdAndUpdate(documentId, { extractedText: text, status: 'processed', chunks: chunks });
+        await Document.findByIdAndUpdate(documentId, { extractedText: text, status: 'ready', chunks: chunks });
         console.log(`Document ${documentId} processed with ${chunks.length} chunks.`);
     }catch(error){
         console.log('Error processing PDF:', error);
@@ -77,7 +77,7 @@ const processPDF = async (documentId, filePath) => {
 }
 
 
-const uploadDocument = async (req, res, next) => {
+export const uploadDocument = async (req, res, next) => {
 
     try{
         if(!req.file){
@@ -117,9 +117,25 @@ const uploadDocument = async (req, res, next) => {
 }
 
 
-const deleteDocument = async (req, res, next) => {
+export const deleteDocument = async (req, res, next) => {
 
     try{
+        const document = await Document.findOne({
+            _id: req.params.id,
+            userId: req.user._id
+        })
+
+        if(!document){
+            res.status(404).json({
+                error:"Document not found"
+            })
+        }
+
+        await fs.unlink(document.filePath).catch((error) => console.log(error))
+
+        await document.deleteOne()
+
+        res.status(200).json({message: "Document deleted successfully"})
 
     }catch(error){
         next(error);
@@ -128,18 +144,8 @@ const deleteDocument = async (req, res, next) => {
 }
 
 
-const updateDocument = async (req, res, next) => {
 
-    try{
-
-    }catch(error){
-        next(error);
-    }
-
-}
-
-
-const getDocument = async (req, res, next) => {
+export const getDocument = async (req, res, next) => {
 
     try{
 
@@ -154,7 +160,7 @@ const getDocument = async (req, res, next) => {
             })
         }
 
-        const flastcardCount = await Flashcard.countDocuments({documentId: document._id, userId: req.user._id});
+        const flashcardCount = await Flashcard.countDocuments({documentId: document._id, userId: req.user._id});
         const quizCount = await Quiz.countDocuments({documentId: document._id, userId: req.user._id})
 
         document.lastAccessed = Date.now();
