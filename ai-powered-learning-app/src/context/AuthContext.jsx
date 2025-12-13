@@ -41,7 +41,7 @@ export const AuthProvider = ({children}) => {
 
     const login = (userData, token) => {
         localStorage.setItem('token', token)
-        localStorage.setTime('user', JSON.stringify(userData))
+        localStorage.setItem('user', JSON.stringify(userData))
 
         setUser(userData)
         setIsAuthenticated(true)
