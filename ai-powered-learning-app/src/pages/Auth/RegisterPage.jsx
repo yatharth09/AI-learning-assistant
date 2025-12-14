@@ -23,8 +23,8 @@ const RegisterPage = () => {
     try {
       const {token, user} = await authService.register(username, email, password)
       login(user, token)
-      toast.success("Account created successfully")
-      navigate('/dashboard')
+      toast.success("Account created successfully, Please login")
+      navigate('/login')
     } catch (error) {
       setError(error.message || "Error loging in")
     }finally{
@@ -45,10 +45,10 @@ const RegisterPage = () => {
                 <BrainCircuit className='w-7 h-7 text-white' strokeWidth={2} />
               </div>
               <h1 className='text-2xl font-medium text-slate-900 tracking-tight mb-2'>
-                Welcome Back
+                Create an Account
               </h1>
               <p className='text-slate-500 text-sm'>
-                Sign in to continue your journey
+                Start your AI-powered learning experience
               </p>
             </div>
 
