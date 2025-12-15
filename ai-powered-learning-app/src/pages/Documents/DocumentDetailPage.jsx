@@ -75,7 +75,7 @@ const DocumentDetailPage = () => {
   })
 
   const renderChat = () => {
-    return "renderChat"
+    return <ChatInterface />
   }
 
   const renderAIActions = () => {
