@@ -7,6 +7,7 @@ import PageHeader from '../../components/common/PageHeader'
 import Tabs from '../../components/common/Tabs'
 import AIActions from '../../components/ai/AIActions'
 import FlashcardManager from '../../components/flashcards/FlashcardManager.Jsx'
+import QuizManager from '../../components/quiz/QuizManager'
 
 const DocumentDetailPage = () => {
 
@@ -89,9 +90,8 @@ const DocumentDetailPage = () => {
   }
 
   const renderQuizTab = () => {
-    return "renderQuiz"
+    return <QuizManager document={id} />
   }
-
   const tabs = [
     {
       name: 'Content',
