@@ -6,8 +6,9 @@ import {ArrowLeft, ExternalLink} from 'lucide-react'
 import PageHeader from '../../components/common/PageHeader'
 import Tabs from '../../components/common/Tabs'
 import AIActions from '../../components/ai/AIActions'
-import FlashcardManager from '../../components/flashcards/FlashcardManager.Jsx'
 import QuizManager from '../../components/quiz/QuizManager'
+import FlashcardManager from '../../components/flashcards/FlashcardManager'
+import ChatInterface from '../../components/chat/ChatInterface'
 
 const DocumentDetailPage = () => {
 
@@ -21,6 +22,7 @@ const DocumentDetailPage = () => {
       try {
         const data = await documentService.getDocumentsById(id)
         setDocument(data)
+        
       } catch (error) {
         toast.error("Failed to fetch document details.")
         console.error(error)

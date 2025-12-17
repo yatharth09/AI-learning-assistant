@@ -21,6 +21,7 @@ const DocumentListPage = () => {
   const fetchDocuments = async() => {
     try {
       const data = await documentService.getDocuments();
+      setDocuments(data.data)
     } catch (error) {
       toast.error("Failed to fetch documents" )
     }finally{
@@ -98,7 +99,7 @@ const DocumentListPage = () => {
       )
     }
 
-    if(documents.length > 0){
+    if(documents.length == 0){
       return (
         <div className='flex items-center justify-center min-h-[400px]'>
           <div className='text-center max-w-md'>

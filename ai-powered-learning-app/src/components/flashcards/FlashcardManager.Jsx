@@ -5,8 +5,8 @@ import toast from 'react-hot-toast'
 import moment from 'moment'
 import flashcardService from '../../services/flashcardService.js'
 import aiService from '../../services/aiService.js'
-import Modal from '../common/Modal'
-import Flashcard from './Flashcard'
+import Modal from '../common/Modal.jsx'
+import Flashcard from './Flashcard.jsx'
 
 
 const FlashcardManager = ({documentId}) => {
