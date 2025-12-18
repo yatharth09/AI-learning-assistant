@@ -1,18 +1,18 @@
 import fs from "fs/promises";
-import * as pdf from "pdf-parse";
 
 export const extractTextFromPDF = async (filePath) => {
-  try {
-    const dataBuffer = await fs.readFile(filePath);
+  const { default: pdf } = await import("pdf-parse");
 
-    const data = await pdf.default(dataBuffer);
+  const buffer = await fs.readFile(filePath);
 
-    return {
-      text: data.text,
-      numPages: data.numpages,
-      info: data.info,
-    };
-  } catch (error) {
-    throw new Error("Error parsing PDF: " + error.message);
+  if (buffer.length > 5 * 1024 * 1024) {
+    throw new Error("PDF too large for serverless parsing");
   }
+
+  const data = await pdf(buffer);
+
+  return {
+    text: data.text,
+    numPages: data.numpages
+  };
 };
