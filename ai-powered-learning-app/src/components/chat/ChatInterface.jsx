@@ -23,7 +23,7 @@ const ChatInterface = () => {
             try {
                 setInitialLoading(true)
                 const response = await aiService.getChatHistory(documentId)
-                setHistory(response.data)
+                setHistory(response.data.chatHistory)
             } catch (error) {
                 console.log(error)
             }finally{
@@ -41,13 +41,13 @@ const ChatInterface = () => {
         e.preventDefault()
         if(!message.trim()) return
 
-        const userMesssage = {role: 'user', content: message, timestamp: new Date()}
+        const userMessage = {role: 'user', content: message, timestamp: new Date()}
         setHistory(prev => [...prev, userMessage])
         setMessage('')
         setLoading(true)
 
         try {
-            const response = await aiService.chat(documentId, userMesssage.content)
+            const response = await aiService.chat(documentId, userMessage.content)
             const assistantMessage = {
                 role: 'assistant',
                 content: response.data.answer,
@@ -68,7 +68,14 @@ const ChatInterface = () => {
             setLoading(false)
         }
 
-        const renderMessage = (msg, index) => {
+        
+
+        
+
+    }
+
+
+    const renderMessage = (msg, index) => {
             const isUser = msg.role === 'user'
 
             return (
@@ -111,7 +118,6 @@ const ChatInterface = () => {
             )
         }
 
-    }
 
   return (
     <div className='flex flex-col h-[70vh] bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden '>
@@ -125,7 +131,7 @@ const ChatInterface = () => {
                     <p className='text-sm text-slate-500'>Ask me anything about the document!</p>
                 </div>
             ):(
-                history.map(renderMessage)
+                history.map((msg, index) => renderMessage(msg, index))
             )}
             <div ref={messagesEndRef} />
             {loading && (

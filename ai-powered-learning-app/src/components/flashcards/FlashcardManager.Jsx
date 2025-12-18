@@ -41,7 +41,7 @@ const FlashcardManager = ({documentId}) => {
   const handleGenerateFlashcards = async () => {
     setGenerating(true)
     try {
-      await aiService.generateFlashcards(documentId)
+      await aiService.generateFlashcards(documentId, 10)
       toast.success("Flascards generated successfully!")
       fetchFlashingcardSets();
     } catch (error) {
@@ -135,7 +135,7 @@ const FlashcardManager = ({documentId}) => {
         </button>
 
         <div className='flex flex-col items-center space-y-8'>
-          <div className='w-full max-w-2xl'>
+          <div className='w-full max-w-6xl'>
             <Flashcard
               flashcard={currentCard} 
               onToggleStar={handleToggleStar}
@@ -182,7 +182,8 @@ const FlashcardManager = ({documentId}) => {
       )
     }
 
-    if(setFlashcardSets.length === 0){
+
+    if(flashcardSets.length == 0){
       return (
       <div className='flex flex-col items-center justify-center py-16 px-6'>
         <div className='inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-emerald-100 to-teal-100 mb-4'>
@@ -301,7 +302,7 @@ const FlashcardManager = ({documentId}) => {
     
     <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}
       title="Delete Flashcard Set?"
-      />
+      >
       <div className='space-y-6'>
         <p className='text-sm text-slate-600'>
             Are you sure you want to delete this flashcard set? This action cannot be undone and all cards will be permanently removed.
@@ -322,6 +323,7 @@ const FlashcardManager = ({documentId}) => {
             }</button>
         </div>
       </div>
+      </Modal>
     </>
   )
 }

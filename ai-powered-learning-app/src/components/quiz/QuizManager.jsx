@@ -4,8 +4,9 @@ import toast from 'react-hot-toast'
 import quizService from '../../services/quizService.js'
 import aiService from '../../services/aiService.js'
 import Button from '../common/Button.jsx'
-import Modal from '../common/Modal'
-import QuizCard from './QuizCard'
+import Modal from '../common/Modal.jsx'
+import QuizCard from './QuizCard.jsx'
+import EmptyState from '../common/EmptyState.jsx'
 
 const QuizManager = ({documentId}) => {
 
@@ -22,7 +23,7 @@ const QuizManager = ({documentId}) => {
         setLoading(true)
         try {
             const data = await quizService.getQuizForDocument(documentId)
-            setQuizs(data)
+            setQuizs(data.data)
         } catch (error) {
             toast.error("Failed to fetch quiz")
             console.error(error)
@@ -33,13 +34,14 @@ const QuizManager = ({documentId}) => {
 
     useEffect(() => {
         if(documentId) fetchQuiz()
+        
     }, [documentId])
 
     const handleGenerateQuiz = async(e) => {
         e.preventDefault()
         setGenerating(true)
         try {
-            await aiService.generateQuiz(documentId, {numQuestions})
+            await aiService.generateQuiz(documentId, numQuestions, "Quiz")
             toast.success('Quiz generated successfully!')
             setIsGenerateModalOpen(false)
             fetchQuiz()
@@ -76,7 +78,7 @@ const QuizManager = ({documentId}) => {
             return <>Loading...</>
         }
 
-        if (quiz.length === 0){
+        if (quizs.length === 0){
             return(
                 <EmptyState
                     title="No Quiz yet"
@@ -87,9 +89,9 @@ const QuizManager = ({documentId}) => {
 
         return (
             <div>
-                {quizs.map((quiz) => {
+                {quizs.map((quiz) => (
                     <QuizCard key={quiz._id} quiz={quiz} onDelete={handleDeleteRequest} />
-                })}
+                ))}
             </div>
         )
 
@@ -109,7 +111,7 @@ const QuizManager = ({documentId}) => {
         <Modal isOpen={isGenerateModalOpen}
             onClose={() => setIsGenerateModalOpen(false)}
             title="Generate new  quiz" >
-                <form onSubmit={handleGenerateQuiz} className='space-y-4'>
+                <div className='space-y-4'>
                     <div>
                         <label className='block text-xs font-medium text-neutral-700 mb-1.5'>Number of Questions</label>
                         <input type="number" value={numQuestions} onChange={(e) => setNumQuestions(Math.max(1, parseInt(e.target.value) || 1))}
@@ -119,11 +121,11 @@ const QuizManager = ({documentId}) => {
                         <Button type='button' variant='secondary' onClick={() => setIsGenerateModalOpen(false)} disabled={generating}>
                             Cancel
                         </Button>
-                        <Button type='submit' disabled={generating}>
+                        <Button onClick={handleGenerateQuiz} disabled={generating}>
                             {generating? "Generating...": "Generate"}
                         </Button>
                     </div>
-                </form>
+                </div>
 
         </Modal>
 

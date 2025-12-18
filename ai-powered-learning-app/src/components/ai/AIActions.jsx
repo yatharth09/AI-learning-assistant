@@ -4,12 +4,13 @@ import { Sparkles, BookOpen, Lightbulb } from 'lucide-react'
 import aiService from "../../services/aiService.js"
 import toast from 'react-hot-toast'
 import MarkdownRenderer from '../common/MarkdownRenderer.jsx'
+import Modal from '../../components/common/Modal.jsx'
 
 const AIActions = () => {
 
     const {id: documentId } = useParams()
     const [loadingAction, setLoadingAction] = useState(null)
-    const [isModalopen, setIsModalOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [modalContent, setModlaContent] = useState("")
     const [modalTitle, setModalTitle] = useState("")
     const [concept, setConcept] = useState("")
@@ -17,9 +18,9 @@ const AIActions = () => {
     const handleGenerateSummary = async() => {
         setLoadingAction("summary")
         try {
-            const {summary} = await aiService.generateSummary(documentId)
+            const response = await aiService.generateSummary(documentId)
             setModalTitle("Generated Summary")
-            setModlaContent(summary)
+            setModlaContent(response.data.data.summary)
             setIsModalOpen(true)
         } catch (error) {
             toast.error("Failed to generate summary")
@@ -36,9 +37,10 @@ const AIActions = () => {
         }
         setLoadingAction("explain")
         try {
-            const {explanation} = await aiService.explainConcept(documentId, concept)
+            const response = await aiService.explainConcept(documentId, concept)
             setModalTitle(`Explanation of "${concept}"`)
-            setModlaContent(explanation)
+            console.log(response)
+            setModlaContent(response.data.data.explanation)
             setIsModalOpen(true)
             setConcept("")
         } catch (error) {
@@ -112,7 +114,7 @@ const AIActions = () => {
                                 className='flex-1 h-11 px-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:bg-white focus:shadow-lg focus:shadow-purple-500/10'
                                 disabled={loadingAction === 'explain'}
                             />
-                            <button type='submit' disabled={loadingAction==="explain" || !concept.trim()} className='shrink-0 h-10 px-5 bg-linear-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95'>
+                            <button type='button' onClick={handleExplainConcept} disabled={loadingAction==="explain" || !concept.trim()} className='shrink-0 h-10 px-5 bg-linear-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95'>
                                 {loadingAction === "explain" ? (
                                     <span className='flex items-center gap-2'>
                                         <div className='w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin' />

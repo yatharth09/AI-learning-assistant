@@ -2,11 +2,11 @@ import axiosInstance from "../utils/axiosInstance.js";
 import { API_PATHS } from "../utils/apiPaths";
 
 
-const generateFlashcards = async(documentId, options) => {
+const generateFlashcards = async(documentId, count) => {
     try {
         const response = await axiosInstance.post(API_PATHS.AI.GENERATE_FLASHCARDS,{
             documentId,
-            ...options
+            count
         })
         
         return response.data
@@ -16,11 +16,11 @@ const generateFlashcards = async(documentId, options) => {
     }
 }
 
-const generateQuiz = async(documentId, options) => {
+const generateQuiz = async(documentId, count,title) => {
     try {
         const response = await axiosInstance.post(API_PATHS.AI.GENERATE_QUIZ,{
             documentId,
-            ...options
+            count
         })
 
         return response.data
@@ -32,7 +32,7 @@ const generateQuiz = async(documentId, options) => {
 
 const generateSummary = async(documentId) => {
     try {
-        const response = await axiosInstance.get(API_PATHS.AI.GENERATE_SUMMARY, {documentId})
+        const response = await axiosInstance.post(API_PATHS.AI.GENERATE_SUMMARY, {documentId})
         
         return response;
     } catch (error) {
@@ -71,7 +71,7 @@ const explainConcept = async(documentId, concept) => {
 
 const getChatHistory = async(documentId) => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AI.GET_CHAT_HISTORY(documentId))
+        const response = await axiosInstance.get(API_PATHS.AI.GET_CHAT_HISTORY(documentId))
 
         return response
         

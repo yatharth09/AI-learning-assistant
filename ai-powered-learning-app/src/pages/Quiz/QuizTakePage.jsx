@@ -19,7 +19,8 @@ const QuizTakePage = () => {
     const fetchQuiz = async () => {
       try {
         const response = await quizService.getQuizById(quizId)
-        setQuiz(response.data)
+        console.log(response.data[0])
+        setQuiz(response.data[0])
       } catch (error) {
         toast.error("Failed to fetch quiz.")
         console.error(error)
@@ -27,12 +28,19 @@ const QuizTakePage = () => {
         setLoading(false)
       }
     }
-
+    
     fetchQuiz()
   }, [quizId])
 
+  const handleOptionChange = (questionId, optionIndex) => {
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [questionId]: optionIndex
+    }))
+  }
+
   const handleNextQuestion = () => {
-    if(currentQuestionIndex > 0){
+    if(currentQuestionIndex < quiz.questions.length - 1){
       setCurrentQuestionIndex((prev) => prev + 1)
     }
   }
@@ -46,13 +54,28 @@ const QuizTakePage = () => {
   const handleSubmitQuiz = async () => {
     setSubmitting(true)
     try {
+      
       const formattedAnswers = Object.keys(selectedAnswers).map(questionId => {
-        const question = quiz.questions.find(q => q._id === questionId)
-        const questionIndex = quiz.questions.findIndex(q => q._id === questionId)
-        const optionIndex = selectedAnswers[questionId]
-        const selectedAnswer = question.option[optionIndex]
-        return {questionIndex, selectedAnswer}
-      })
+      const questionIndex = quiz.questions.findIndex(
+        q => q._id.toString() === questionId
+      );
+
+      const question = quiz.questions[questionIndex];
+      const optionIndex = selectedAnswers[questionId];
+
+      if (!question || optionIndex == null) {
+        return null;
+      }
+
+      const selectedAnswer = question.options[optionIndex];
+
+      return {
+        questionIndex,
+        selectedAnswer
+      };
+}).filter(Boolean);
+      
+      
 
       await quizService.submitQuiz(quizId, formattedAnswers)
       toast.success('Quiz submitted successfully!')
@@ -72,7 +95,7 @@ const QuizTakePage = () => {
     )
   }
 
-  if (!quiz || quiz.questions.length === 0){
+  if (!quiz || quiz.length === 0){
     return (
       <div className='flex items-center justify-center min-h-[60vh]'>
         <div className='text-center'>
@@ -164,7 +187,7 @@ const QuizTakePage = () => {
           Previous
         </Button>
 
-        {currentQuestionIndex === quiz.question.length - 1? (
+        {currentQuestionIndex === quiz.questions.length - 1? (
           <button onClick={handleSubmitQuiz} disabled={submitting} className='group relative px-8 h-12 bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-110 overflow-hidden'>
             <span className='relative z-10 flex items-center justify-center gap-2'>{
               submitting?(

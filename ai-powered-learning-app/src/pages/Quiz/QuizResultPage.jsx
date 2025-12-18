@@ -15,6 +15,7 @@ const QuizResultPage = () => {
     const fetchResults = async () => {
       try {
         const data = await quizService.getQuizResults(quizId)
+        
         setResults(data)
       } catch (error) {
         toast.error("Failed to fetch quiz results")
@@ -34,7 +35,7 @@ const QuizResultPage = () => {
     )
   }
 
-  if(!results || !results.data){
+  if(!results || !results.detailedResult){
     return (
       <div className='flex items-center justify-center min-h-[60vh]'>
       <div className='text-center'>
@@ -44,13 +45,26 @@ const QuizResultPage = () => {
     )
   }
 
-  const {data: {quiz, results: detailedResults}} = results
+  
+  const {quiz, detailedResult} = results
+
   const score = quiz.score
-  const totalQuestions = detailedResults.length
-  const correctAnswers = detailedResults.filter(r => r.isCorrect).length
+  const totalQuestions = detailedResult.length
+  const correctAnswers = detailedResult.filter(r => r.isCorrect).length
   const incorrectAnswers = totalQuestions - correctAnswers
 
+
   const getScoreColor = (score) => {
+    
+    if(score>=80) return 'from-emerald-500 to-teal-500'
+    
+    if(score >= 60) return 'from-amber-500 to-orange-500'
+    return 'from-rose-500 to-red-500'
+  }
+
+  
+
+  const getScoreMessage = (score) => {
     if(score>=90) return "Outstanding!";
     if(score>=80) return 'Great job!'
     if(score >=70) return 'Good work!'
@@ -61,7 +75,7 @@ const QuizResultPage = () => {
   return (
     <div className='max-w-5xl mx-auto'>
       <div className='mb-6'>
-        <Link className='group inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors duration-200' to={`/documents/${quiz.document._id}`}>
+        <Link className='group inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors duration-200' to={`/documents/${quiz.documentId._id}`}>
           <ArrowLeft strokeWidth={2} className='w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200' /> Back to Document
         </Link>
       </div>
@@ -69,17 +83,15 @@ const QuizResultPage = () => {
 
       <div className='bg-white/80 backdrop-blur-xl border-2 border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 p-8 mb-8'>
         <div className='text-center space-y-6'>
-          <div className='inline-flex items-center justify-center w-15 h-15 rounded-2xl bg-linear-to-br from-emerald-100 to-teal-100 shadow-lg shadow-emerald-500/25'>
-            <Trophy strokeWidth={2} className='w-7 h-7 text-emerald-600'/>
+          <div className='inline-flex items-center justify-center w-30 h-30 rounded-2xl bg-linear-to-br from-amber-100 to-amber-200 shadow-lg p-2  shadow-amber-500/25'>
+            <Trophy strokeWidth={2} className='w-15 h-15 text-orange-400'/>
           </div>
 
           <div >
-            <p className='text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2'>
+            <p className='text-xl font-semibold text-slate-600 uppercase tracking-wide mb-2'>
               Your Score
             </p>
-            <div className={`inline-block text-5xl font-bold bg-linear-to-r ${
-              getScoreColor(score)
-            } bg-clip-text text-transparent mb-2`}>{score}%</div>
+            <div className={`inline-block text-5xl font-bold bg-linear-to-r  bg-clip-text ${getScoreColor(score)} mb-2`}>{score}%</div>
           </div>
           <p className='text-lg font-medium text-slate-700'>{getScoreMessage(score)}</p>
         </div>
@@ -111,7 +123,7 @@ const QuizResultPage = () => {
           <h3 className='text-lg font-semibold text-slate-900'>Detailed Review</h3>
         </div>
 
-        {detailedResults.map((result, index) => {
+        {detailedResult.map((result, index) => {
           const userAnswerIndex = result.options.findIndex(opt => opt === result.selectedAnswer)
           const correctAnswerIndex = result.correctAnswer.startsWith('0')
             ? parseInt(result.correctAnswer.substring(1)) - 1
@@ -216,7 +228,7 @@ const QuizResultPage = () => {
 
 
         <div className='mt-8 flex justify-center'>
-          <Link to={`/documents/${quiz.document._id}`}>
+          <Link to={`/documents/${quiz.documentId._id}`}>
             <button className='group relative px-8 h-12 bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 active:scale-95 overflow-hidden'>
               <span className='relative z-10 flex items-center gap-2'>
                 <ArrowLeft className='w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200' strokeWidth={2.5} />

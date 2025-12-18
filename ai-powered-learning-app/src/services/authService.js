@@ -54,10 +54,11 @@ const updateProfile = async(userData) => {
     }
 }
 
-const changePassword = async(password) => {
+const changePassword = async(currentPassword, newPassword) => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AUTH.CHANGE_PASSWORD,{
-            password
+        const response = await axiosInstance.put(API_PATHS.AUTH.CHANGE_PASSWORD,{
+            currentPassword,
+            newPassword
         })
 
         return response

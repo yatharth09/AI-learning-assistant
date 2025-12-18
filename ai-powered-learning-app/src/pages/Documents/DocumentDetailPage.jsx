@@ -35,9 +35,10 @@ const DocumentDetailPage = () => {
   }, [id])
 
   const getPdfUrl = () => {
-    if(!document?.data?.filePath) return null;
+    if(!document?.data?.data?.filePath) return null;
 
-    const filePath = document.data.filePath
+    const filePath = document.data.data.filePath
+    console.log("filePath___", filePath)
 
     if(filePath.startsWith('http://') || filePath.startsWith('https://')){
       return filePath
@@ -52,7 +53,7 @@ const DocumentDetailPage = () => {
       return (<>Loading...</>)
     }
 
-    if(!document || !document.data || !document.data.filePath) {
+    if(!document || !document.data || !document.data.data.filePath) {
       return <div className=''>PDF not available</div>
     }
 
@@ -92,7 +93,7 @@ const DocumentDetailPage = () => {
   }
 
   const renderQuizTab = () => {
-    return <QuizManager document={id} />
+    return <QuizManager documentId={id} />
   }
   const tabs = [
     {

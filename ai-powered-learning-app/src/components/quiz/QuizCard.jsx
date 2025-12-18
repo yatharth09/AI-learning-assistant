@@ -5,8 +5,8 @@ import moment from 'moment'
 
 const QuizCard = ({quiz, onDelete}) => {
   return (
-    <div className='group relative bg-white/80 backdrop-blur-xl border-2 border-slate-200 hover:border-emerald-300 rounded-2xl p-4 transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10 flex flex-col justify-between'>
-        <button onClick={() => {
+    <div className='group mb-5 relative bg-white/80 backdrop-blur-xl border-2 border-slate-200 hover:border-emerald-300 rounded-2xl p-4 transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10 flex flex-col justify-between'>
+        <button onClick={(e) => {
             e.stopPropagation()
             onDelete(quiz)
         }} className='absolute top-4 right-4 p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100'>

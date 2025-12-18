@@ -14,6 +14,7 @@ export const useAuth = () => {
 export const AuthProvider = ({children}) => {
 
     const [user, setUser] = useState(null)
+    const [email, setEmail] = useState(null)
     const [loading, setLoading] = useState(true)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -25,9 +26,11 @@ export const AuthProvider = ({children}) => {
         try {
             const token = localStorage.getItem('token')
             const userStr = localStorage.getItem('user')
+            const email = localStorage.getItem('email')
 
             if(token && user){
-                const userData = JSON.parse(userStr)
+                const userData = userStr
+                setEmail(email)
                 setUser(userData)
                 setIsAuthenticated(true)
             }
@@ -39,11 +42,13 @@ export const AuthProvider = ({children}) => {
         }
     }
 
-    const login = (userData, token) => {
+    const login = (userData, token, email) => {
         localStorage.setItem('token', token)
-        localStorage.setItem('user', JSON.stringify(userData))
+        localStorage.setItem('user',userData)
+        localStorage.setItem('email', email)
 
         setUser(userData)
+        setEmail(email)
         setIsAuthenticated(true)
     }
 
@@ -65,6 +70,7 @@ export const AuthProvider = ({children}) => {
 
     const value = {
         user,
+        email,
         loading,
         isAuthenticated,
         updateUser,

@@ -36,7 +36,7 @@ const submitQuiz = async(quizId, answers) => {
 
 const getQuizResults = async(quizId) => {
     try {
-        const response = await axiosInstance.get(API_PATHS.QUIZ.GET_QUIZ_RESULTS(quizId))
+        const response = await axiosInstance.post(API_PATHS.QUIZ.GET_QUIZ_RESULTS(quizId))
 
         return response.data
         

@@ -1,9 +1,13 @@
 import { useAuth } from '../../context/AuthContext'
 import {Bell, User, Menu} from 'lucide-react'
+import { useEffect } from 'react'
 
 const Header = ({toggle}) => {
-    const {user} = useAuth()
+    const {user, email} = useAuth()
 
+    useEffect(() => {
+        console.log(user)
+    })
 
   return (
     <header className='sticky top-0 z-40 w-full h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200/60'>
@@ -27,8 +31,8 @@ const Header = ({toggle}) => {
                             <User size={18} strokeWidth={2.5}/>
                         </div>
                         <div>
-                            <p className='text-sm font-semibold text-slate-900'>{user?.username || "User"} </p>
-                            <p className='text-xs text-slate-500'>{user?.email || "user@example.com"}</p>
+                            <p className='text-sm font-semibold text-slate-900'>{user || "User"} </p>
+                            <p className='text-xs text-slate-500'>{email || "user@example.com"}</p>
                         </div>
                     </div>
                 </div>

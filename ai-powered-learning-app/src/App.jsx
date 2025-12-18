@@ -11,6 +11,7 @@ import FlashcardListPage from './pages/Flashcards/FlashcardListPage'
 import QuizTakePage from './pages/Quiz/QuizTakePage'
 import QuizResultPage from './pages/Quiz/QuizResultPage'
 import ProfilePage from './pages/Profile/ProfilePage'
+import FlashcardPage from './pages/Flashcards/FlashcardPage'
 import { useAuth } from './context/AuthContext'
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path='/documents' element={<DocumentListPage />} />
           <Route path='/documents/:id' element={<DocumentDetailPage />} />
           <Route path='/flashcards' element={<FlashcardListPage />} />
+          <Route path='/documents/:id/flashcards' element={<FlashcardPage />} />
           <Route path='/quiz/:quizId' element={<QuizTakePage />} />
           <Route path='/quiz/:quizId/results' element={<QuizResultPage />} />
           <Route path='/profile' element={<ProfilePage />} />

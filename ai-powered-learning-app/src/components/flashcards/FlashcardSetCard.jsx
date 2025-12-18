@@ -1,18 +1,18 @@
-import React from 'react'
+
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Sparkles, TrendingUp } from 'lucide-react'
 import moment from 'moment'
 
-const FlashcardSetCard = () => {
+const FlashcardSetCard = ({flashcard}) => {
     const navigate = useNavigate()
-
     const handleStudyNow = () => {
-        navigate(`/documents/${FlashcardSetCard.documentId._id}/flashcards`)
+        navigate(`/documents/${flashcard?.documentId?._id}/flashcards`)
     }
-
-    const reviewedCount = FlashcardSetCard.cards.filter(card => card.lastReviewed).length
-    const totalCards = FlashcardSetCard.cards.length
+    const reviewedCount = flashcard?.cards?.filter(card => card.lastReviewed).length
+    const totalCards = flashcard?.cards?.length
     const progressPercentage = totalCards > 0 ? Math.round((reviewedCount / totalCards)*100) : 0
+
+  
 
   return (
     <div className='group relative bg-white/80 backdrop-blur-xl border-2 border-slate-200 hover:border-emerald-300 rounded-2xl p-6 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10 flex flex-col justify-between' onClick={handleStudyNow}>
@@ -22,8 +22,8 @@ const FlashcardSetCard = () => {
                     <BookOpen className='w-6 h-6 text-emerald-600' strokeWidth={2} />
                 </div>
                 <div className='flex-1 min-w-0'>
-                    <h3 className='text-base font-semibold text-slate-900 line-clamp-2 mb-1' title={flashcardSet?.documentId?.title}>{flashcardSet?.documentId?.title}</h3>
-                    <p className='text-xs font-medium text-slate-500 uppercase tracking-wide'>Created {moment(flashcardSet.createdAt).fromNow()}</p>
+                    <h3 className='text-base font-semibold text-slate-900 line-clamp-2 mb-1' title={flashcard?.documentId?.title}>{flashcard?.documentId?.title}</h3>
+                    <p className='text-xs font-medium text-slate-500 uppercase tracking-wide'>Created {moment(flashcard?.createdAt).fromNow()}</p>
                 </div>
             </div>
 

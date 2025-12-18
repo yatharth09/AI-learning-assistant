@@ -63,9 +63,9 @@ const FlashcardPage = () => {
     setCurrentCardIndex((prev) => (prev - 1) % flashcards.length)
   }
 
-  const handleReview = async () => {
-    const currentCard = flashcards[currentCardIndex]
-    if (!currentCard) return
+ const handleReview = async(index) => {
+    const currentCard = selectedSet?.cards[currentCardIndex]
+    if(!currentCard) return
 
     try {
       await flashcardService.reviewFlashcard(currentCard._id, index)
@@ -113,7 +113,7 @@ const FlashcardPage = () => {
 
     return (
       <div className='flex flex-col items-center space-y-6'>
-        <div className='w-full max-w-md'>
+        <div className='w-full max-w-6xl'>
           <Flashcard flashcard={currentCard} onToggleStar={handleToggleStar} />
         </div>
         <div className='flex items-center gap-4'>
@@ -165,7 +165,7 @@ const FlashcardPage = () => {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         title="Confirm Delete Flashcard Set"
-        /> 
+        >
         <div className='space-y-4'>
           <p className='text-sm text-neutral-600'>
             Are you sure you want to delete all flashcards for this document?
@@ -189,6 +189,7 @@ const FlashcardPage = () => {
             </Button>
           </div>
         </div>
+        </Modal> 
     </div>
   )
 }

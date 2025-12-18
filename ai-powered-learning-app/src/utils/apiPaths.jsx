@@ -15,11 +15,11 @@ export const API_PATHS = {
         DELETE_DOCUMENTS:(id) => `/api/documents/${id}`,
     },
     AI: {
-        GENERATE_FLASHCARDS: "/api/ai/generate-flashcards",
-        GENERATE_QUIZ: "/api/ai/generate-quiz",
-        GENERATE_SUMMARY: "/api/ai/generate-summary",
+        GENERATE_FLASHCARDS: "/api/ai/generateFlashcards",
+        GENERATE_QUIZ: "/api/ai/generateQuiz",
+        GENERATE_SUMMARY: "/api/ai/generateSummary",
         CHAT: "/api/ai/chat",
-        EXPLAIN_CONCEPT: "/api/ai/explain-concept",
+        EXPLAIN_CONCEPT: "/api/ai/explainConcept",
         GET_CHAT_HISTORY:(documentId) =>  `/api/ai/chat-history/${documentId}`,
     },
     FLASHCARDS: {
@@ -34,7 +34,7 @@ export const API_PATHS = {
         GET_QUIZ_FOR_DOC: (documentId) => `/api/quizz/${documentId}`,
         GET_QUIZ_BY_ID: (id) => `/api/quizz/quiz/${id}`,
         SUBMIT_QUIZ:(id) => `/api/quizz/${id}/submit`,
-        GET_QUIZ_RESULTS:(id) => `/api/quizz/${id}/results`,
+        GET_QUIZ_RESULTS:(id) => `/api/quizz/${id}/result`,
         DLETE_QUIZ:(id) => `/api/quizz/${id}`,
 
     },

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import PageHeader from "../../components/common/PageHeader"
 import Button from '../../components/common/Button'
-import authService from '../../services/authService.jsx'
+import authService from '../../services/authService.js'
 import {useAuth} from '../../context/AuthContext.jsx'
 import toast from 'react-hot-toast'
 import { User, Mail, Lock } from 'lucide-react'
@@ -46,7 +46,7 @@ const ProfilePage = () => {
     }
     setPasswordLoading(true)
     try {
-      await authService.changePassword({currentPassword, newPassword})
+      await authService.changePassword(currentPassword, newPassword)
       toast.success("Password changed successfully!")
       setCurrentPassword("")
       setNewPassword("")
@@ -89,10 +89,10 @@ const ProfilePage = () => {
                 Email Address
               </label>
               <div className='relative'>
-                <div className='absolute insset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <Mail className='h-4 w-4 text-neutral-400' />
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <Mail className='h-4 w-4  text-neutral-400' />
                 </div>
-                <p className='w-full h-9 pl-9 pr-3 border border-neutra-200 rounded-lg bg-neutral-50 text-sm text-neutral-900'>{email}</p>
+                <p className='w-full h-9 pl-9 pr-3 pt-2 border border-neutra-200 rounded-lg bg-neutral-50 text-sm text-neutral-900'>{email}</p>
               </div>
             </div>
           </div>

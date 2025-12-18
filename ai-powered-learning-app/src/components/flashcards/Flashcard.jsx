@@ -9,7 +9,7 @@ const Flashcard = ({flashcard, onToggleStar}) => {
     }
 
   return (
-    <div className="" style={{perspective: '1000px'}}>
+    <div className="relative w-full h-72" style={{perspective: '1000px'}}>
         <div className={`relative w-full h-full transition-transform duration-500 transform-gpu cursor-pointer`}
             style={{
                 transformStyle: 'preserve-3d',
@@ -87,7 +87,7 @@ const Flashcard = ({flashcard, onToggleStar}) => {
 
                 <div className="flex items-center justify-center gap-2 text-xs text-white/70 font-medium">
                     <RotateCcw className="w-3.5 h-3.5" strokeWidth={2} />
-                    <span>CLick to see question</span>
+                    <span>Click to see question</span>
                 </div>
 
             </div>

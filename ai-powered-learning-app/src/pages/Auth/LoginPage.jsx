@@ -20,8 +20,8 @@ const LoginPage = () => {
     setError('')
     setLoading(true)
     try {
-      const {token, user} = await authService.login(email, password)
-      login(user, token)
+      const {token, username} = await authService.login(email, password)
+      login(username, token, email)
       toast.success("Logged in successfully")
       navigate('/dashboard')
     } catch (error) {
