@@ -9,7 +9,7 @@ router.use(protect)
 router.get('/:documentId', getFlashcards);
 router.get('/', getAllFlashcardSets)
 router.post('/:cardId/review', reviewFlashcard );
-router.put('/:cardId/star', toggleStarFlashcard)
+router.post('/:cardId/star', toggleStarFlashcard)
 router.delete('/:id', deleteFlashcardSet);
 
 

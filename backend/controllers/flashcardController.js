@@ -6,7 +6,7 @@ export const getFlashcards = async (req, res, next) => {
         const flashcards = await Flashcard.find({
             userId: req.user._id,
             documentId: req.params.documentId 
-        }).populate('documentId', 'title', 'filename').sort({createAt: -1})
+        }).populate('documentId', 'title filename').sort({createAt: -1})
 
         return res.status(200).json({
             count: flashcards.length,
@@ -32,15 +32,18 @@ export const getAllFlashcardSets = async (req, res, next) => {
 
 export const reviewFlashcard = async(req, res, next) => {
     try {
-        const flashcardSet = Flashcard.findOne({"cards._id": req.params.cardId, userId: req.user._id})
+        const flashcardSet = await Flashcard.findOne({"cards._id": req.params.cardId, userId: req.user._id})
+        console.log(flashcardSet)
 
         if(!flashcardSet){
             return res.status(404).json({
-                message: "Flash card/Flash set not found"
+                message: "Flashcard set not found"
             })
         }
 
-        const cardIndex = flashcardSet.cards.findIndex(card => card._id.toString() === req.params.cardId)
+        // const cardIndex = flashcardSet.cards.findIndex(card => card._id.toString() === req.params.cardId)
+        
+        const cardIndex = req.body.cardIndex
 
         if(cardIndex === -1){
             return res.status(404).json({

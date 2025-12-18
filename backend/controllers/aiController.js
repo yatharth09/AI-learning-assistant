@@ -30,20 +30,25 @@ export const generateFlashcards = async(req, res, next) => {
 
         
 
-        const cards = await geminiService.generateFlashcards(document.extractedText, parseInt(count))
+        const cards = await geminiService.generateFlashcards(document.extractedText, count)
 
         console.log(cards)
-        const flashcardSets = await Flashcard.create({
-            userId: req.user._id,
-            documentId: document._id,
-            cards: cards.map(card => ({
-                question: card.question,
+        const cardsSet = []
+
+        cards.map(card => {
+                cardsSet.push({question: card.question,
                 answer: card.answer,
                 difficulty: card.difficulty,
                 reviewCount: 0,
-                isStarred: false
+                isStarred: false,
+                lastReviewed: new Date()
+            })})
 
-            }))
+        console.log(cardsSet)
+        const flashcardSets = await Flashcard.create({
+            userId: req.user._id,
+            documentId: document._id,
+            cards: cardsSet
         })
 
         res.status(201).json(
@@ -288,7 +293,7 @@ export const explainConcept = async(req, res, next) => {
 
 export const getChatHistory = async(req, res, next) => {
     try {
-        const {documentId} = req.body
+        const {documentId} = req.params
 
         if(!documentId){
             return res.status(404).json({

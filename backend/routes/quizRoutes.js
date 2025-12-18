@@ -10,7 +10,7 @@ router.use(protect)
 router.get('/:documentId', getQuiz);
 router.get('/quiz/:id', getQuizById);
 router.post('/:id/submit', submitQuiz );
-router.put('/:id/result', getQuizResults);
+router.post('/:id/result', getQuizResults);
 router.delete('/:id', deleteQuiz);
 
 export default router

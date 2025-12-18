@@ -8,6 +8,8 @@ export const getQuiz = async(req, res, next) => {
             documentId: req.params.documentId
         }).populate('documentId', 'title fileName').sort({createdAt: -1})
 
+        console.log(quiz)
+
         res.status(200).json({
             count: quiz.length,
             data: quiz
@@ -46,7 +48,11 @@ export const getQuizById = async(req, res, next) => {
 
 export const submitQuiz = async(req, res, next) => {
     try {
+
+        
         const {answers} = req.body
+        
+        
 
         if(!Array.isArray(answers)){
             return res.status(400).json({
@@ -55,10 +61,12 @@ export const submitQuiz = async(req, res, next) => {
             })
         }
 
-        const quiz = Quiz.findOne({
+        const quiz = await Quiz.findOne({
             _id: req.params.id,
             userId: req.user._id
         })
+
+        
 
         if(!quiz){
             return res.status(404).json({
@@ -78,7 +86,7 @@ export const submitQuiz = async(req, res, next) => {
         answers.forEach(answer => {
             const {questionIndex, selectedAnswer} = answer
 
-            if(questionIndex < quiz.questions.length){
+            if(quiz.questions && questionIndex < quiz.questions.length){
                 const question = quiz.questions[questionIndex]
                 const isCorrect = selectedAnswer == question.correctAnswer
 
@@ -118,9 +126,9 @@ export const submitQuiz = async(req, res, next) => {
 
 export const getQuizResults = async(req, res, next) => {
     try {
-        const quiz = await Quiz.fineOne({
+        const quiz = await Quiz.findOne({
             _id: req.params.id,
-            userId: req.body._id
+            userId: req.user._id
         }).populate('documentId', 'title')
 
         if(!quiz){
@@ -129,11 +137,11 @@ export const getQuizResults = async(req, res, next) => {
             })
         }
 
-        if(quiz.completedAt){
-            return res.status(400).json({
-                message: "Quiz already submitted"
-            })
-        }
+        // if(quiz.completedAt){
+        //     return res.status(400).json({
+        //         message: "Quiz already submitted"
+        //     })
+        // }
 
         const detailedResult = quiz.questions.map((question, index) => {
             const userAnswer = quiz.userAnswers.find(a => a.questionIndex === index)
@@ -173,7 +181,7 @@ export const deleteQuiz = async(req, res, next) => {
             })
         }
 
-        await quiz.delete()
+        await quiz.deleteOne()
 
         res.status(200).json({
             message: "Quiz deleted"
