@@ -1,10 +1,10 @@
 import Document from "../models/Document.js";
 import Flashcard from "../models/Flashcard.js";
 import Quiz from "../models/Quiz.js";
-import { extractTextFromPDF } from "../utils/pdfParser.js";
+import { extractTextFromPdfBuffer, fetchPdfBuffer } from "../utils/pdfParser.js";
 import { chunkText } from "../utils/textChunker.js";
-import fs from 'fs/promises';
 import mongoose from "mongoose";
+import { uploadPdfToCloudinary } from "../utils/uploadCloudinary.js";
 
 
 
@@ -63,58 +63,61 @@ export const getDocuments = async (req, res, next) => {
 
 }
 
-const processPDF = async (documentId, filePath) => {
-    try{
-        const {text} = await extractTextFromPDF(filePath);
-        const chunks = chunkText(text, 500, 50);
+const processPDF = async (documentId, fileUrl) => {
+  try {
+    const buffer = await fetchPdfBuffer(fileUrl);
 
-        await Document.findByIdAndUpdate(documentId, { extractedText: text, status: 'ready', chunks: chunks });
-        console.log(`Document ${documentId} processed with ${chunks.length} chunks.`);
-    }catch(error){
-        console.log('Error processing PDF:', error);
-        await Document.findByIdAndUpdate(documentId, { status: 'error' });
-    }
-}
+    const { text } = await extractTextFromPdfBuffer(buffer);
+
+    const chunks = chunkText(text, 500, 50);
+
+    await Document.findByIdAndUpdate(documentId, {
+      extractedText: text,
+      chunks,
+      status: "ready",
+    });
+
+    console.log(`Document ${documentId} processed`);
+  } catch (error) {
+    console.error("PDF processing failed:", error);
+    await Document.findByIdAndUpdate(documentId, {
+      status: "failed",
+    });
+  }
+};
 
 
 export const uploadDocument = async (req, res, next) => {
-
-    try{
-        if(!req.file){
-            return res.status(400).json({ message: 'No file uploaded' });
-        }
-
-        const {title} = req.body
-
-        if(!title){
-            await fs.unlink(req.file.path);
-            return res.status(400).json({ message: 'Title is required' });
-        }
-
-        const baseUrl = `http://localhost:${process.env.PORT || 5000}`;
-        const fileUrl = `${baseUrl}/uploads/documents/${req.file.filename}`;
-
-        const document =  await Document.create({
-            userId: req.user._id,
-            title,
-            fileName: req.file.originalname,
-            filePath: fileUrl,
-            fileSize: req.file.size,
-            status: 'processing',
-        });
-
-        processPDF(document._id, req.file.path).catch(err => console.error('Error processing PDF:', err));
-
-        res.status(201).json({ message: 'Document uploaded successfully. Processing in progress ...', document });
-
-    }catch(error){
-        if(req.file){
-            await fs.unlink(req.file.path).catch(err => console.error('Error deleting file:', err));
-        }
-        next(error);
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
-}
+    const uploadResult = await uploadPdfToCloudinary(
+      req.file.buffer,
+      req.file.originalname
+    );
+
+    const document = await Document.create({
+      userId: req.user._id,
+      title: req.body.title,
+      fileName: req.file.originalname,
+      filePath: uploadResult.secure_url, // ✅ PUBLIC URL
+      fileSize: req.file.size,
+      status: "processing"
+    });
+
+    processPDF(document._id, uploadResult.secure_url).catch(err => console.error('Error processing PDF:', err));
+
+    res.status(201).json({
+      message: "Document uploaded successfully",
+      data: document
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 export const deleteDocument = async (req, res, next) => {
