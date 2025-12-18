@@ -13,6 +13,7 @@ export const extractTextFromPDF = async (filePath) => {
 
   return {
     text: data.text,
-    numPages: data.numpages
+    numPages: data.numpages,
+    info: data.info
   };
 };
