@@ -5,8 +5,16 @@ export const uploadPdfToCloudinary = (buffer, fileName) => {
     cloudinary.uploader.upload_stream(
       {
         resource_type: "raw",
+
         folder: "documents",
-        public_id: fileName.replace(".pdf", ""),
+
+        // 🔑 preserve original filename INCLUDING .pdf
+        use_filename: true,
+        unique_filename: false,
+
+        // 🔑 ensure public access
+        access_mode: "public",
+        public_id: fileName.replace(".pdf", "")
       },
       (error, result) => {
         if (error) reject(error);

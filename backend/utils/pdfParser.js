@@ -1,39 +1,25 @@
-import fetch from "node-fetch";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-
-export const fetchPdfBuffer = async (url) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error("Failed to fetch PDF");
-  }
-  return Buffer.from(await res.arrayBuffer());
-};
 
 
 
-export const extractTextFromPdfBuffer = async (buffer) => {
-  const uint8Array = new Uint8Array(buffer);
-  const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
-  const pdf = await loadingTask.promise;
+export async function extractTextSimple(fileUrl) {
+  const res = await fetch("https://api.pdf.co/v1/pdf/convert/to/text", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.PDFCO_API_KEY,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    url: fileUrl,
+    inline: true
+  })
+});
 
-  let text = "";
+const result = await res.json();
+const text = result.body;
 
-  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-    const page = await pdf.getPage(pageNum);
-    const content = await page.getTextContent();
-
-    const pageText = content.items
-      .map(item => item.str)
-      .join(" ");
-
-    text += pageText + "\n";
-  }
-
-  return {
-    text,
-    numPages: pdf.numPages
-  };
-};
+return text
+  
+}
 
 
 

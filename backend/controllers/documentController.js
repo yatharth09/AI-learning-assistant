@@ -1,7 +1,7 @@
 import Document from "../models/Document.js";
 import Flashcard from "../models/Flashcard.js";
 import Quiz from "../models/Quiz.js";
-import { extractTextFromPdfBuffer, fetchPdfBuffer } from "../utils/pdfParser.js";
+import { extractTextSimple } from "../utils/pdfParser.js";
 import { chunkText } from "../utils/textChunker.js";
 import mongoose from "mongoose";
 import { uploadPdfToCloudinary } from "../utils/uploadCloudinary.js";
@@ -65,10 +65,9 @@ export const getDocuments = async (req, res, next) => {
 
 const processPDF = async (documentId, fileUrl) => {
   try {
-    const buffer = await fetchPdfBuffer(fileUrl);
 
-    const { text } = await extractTextFromPdfBuffer(buffer);
-
+    const text  = await extractTextSimple(fileUrl);
+    console.log(text)
     const chunks = chunkText(text, 500, 50);
 
     await Document.findByIdAndUpdate(documentId, {
