@@ -150,7 +150,7 @@ const DashboardPage = () => {
                     timestamp: q.lastAccessed,
                     link: `/document/${q._id}`,
                     type: 'quiz',
-                    score: q.score
+                    score: q.score || 0
                   }))
                 ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((activity, key) => (
                   <div
@@ -174,7 +174,7 @@ const DashboardPage = () => {
                       </p>
                     </div>
                       {activity.link && (
-                        <a className="ml-4 px-4 py-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200 whitespace-nowrap">Score: {activity.score}</a>
+                        <a className="ml-4 px-4 py-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200 whitespace-nowrap">{activity.score === 0? "Not attempted" : `Score: ${activity.score}`}</a>
                       )}
                   </div>
                 ))}
