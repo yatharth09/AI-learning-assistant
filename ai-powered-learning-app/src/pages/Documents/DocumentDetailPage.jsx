@@ -16,6 +16,50 @@ const DocumentDetailPage = () => {
   const [document, setDocument] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('Content')
+  const [pdfUrl, setPdfUrl] = useState(null)
+  const [loadingPdf, setLoadingPdf] = useState(false);
+
+useEffect(() => {
+  if (!document?.data?.data?.filePath) return;
+
+  let cancelled = false;
+
+  const loadPdf = async () => {
+    try {
+      setLoadingPdf(true);
+
+      const url = document.data.data.filePath;
+
+      const res = await fetch(url);
+      const buffer = await res.arrayBuffer();
+
+      const blob = new Blob([buffer], {
+        type: "application/pdf",
+      });
+
+      const blobUrl = URL.createObjectURL(blob);
+
+      // 🔐 ONLY set if still mounted
+      if (!cancelled) {
+        setPdfUrl(blobUrl);
+      }
+    } catch (e) {
+      console.error("PDF load failed", e);
+    } finally {
+      setLoadingPdf(false);
+    }
+  };
+
+  loadPdf();
+
+  return () => {
+    cancelled = true;
+    setPdfUrl((old) => {
+      if (old?.startsWith("blob:")) URL.revokeObjectURL(old);
+      return null;
+    });
+  };
+}, [document?.data?.data?.filePath]);
 
   useEffect(() => {
     const fetchDocumentDetails = async () => {
@@ -34,19 +78,8 @@ const DocumentDetailPage = () => {
     fetchDocumentDetails()
   }, [id])
 
-  const getPdfUrl = () => {
-    if(!document?.data?.data?.filePath) return null;
 
-    const filePath = document.data.data.filePath
-    console.log("filePath___", filePath)
 
-    if(filePath.startsWith('http://') || filePath.startsWith('https://')){
-      return filePath
-    }
-
-    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-    return `${baseUrl}${filePath.startsWith('/')? '': '/'}${filePath}`
-  }
 
   const renderContent = (() => {
     if(loading){
@@ -56,8 +89,6 @@ const DocumentDetailPage = () => {
     if(!document || !document.data || !document.data.data.filePath) {
       return <div className=''>PDF not available</div>
     }
-
-    const pdfUrl = getPdfUrl();
 
     return (
       <div className='bg-white border-gray-300 rounded-lg overflow-hidden shadow-sm'>
@@ -74,7 +105,7 @@ const DocumentDetailPage = () => {
             </a>
         </div>
         <div className='bg-gray-100 p-1'>
-          <iframe src={pdfUrl} className='w-full h-[70vh] bg-white rounded border border-gray-300' title='PDF Viewer' style={{colorScheme: 'light'}} />
+          {pdfUrl && pdfUrl.startsWith("blob:") && <iframe src={pdfUrl} className='w-full h-[70vh] bg-white rounded border border-gray-300' title='PDF Viewer' style={{colorScheme: 'light'}} />}
         </div>
       </div>
     )

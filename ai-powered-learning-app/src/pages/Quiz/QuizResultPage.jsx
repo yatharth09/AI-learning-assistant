@@ -4,11 +4,13 @@ import quizService from '../../services/quizService'
 import PageHeader from '../../components/common/PageHeader'
 import toast from 'react-hot-toast'
 import {ArrowLeft, CheckCircle2, XCircle, Trophy, Target, BookOpen} from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
 
 const QuizResultPage = () => {
   const {quizId} = useParams()
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(true)
+  const {handleNotification} = useAuth()
 
 
   useEffect(() => {
@@ -19,6 +21,7 @@ const QuizResultPage = () => {
         setResults(data)
       } catch (error) {
         toast.error("Failed to fetch quiz results")
+        handleNotification("Failed to fetch quiz results")
         console.error(error)
       }finally{
         setLoading(false)

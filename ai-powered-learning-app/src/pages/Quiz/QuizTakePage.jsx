@@ -5,9 +5,11 @@ import quizService from '../../services/quizService'
 import PageHeader from '../../components/common/PageHeader'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
+import { useAuth } from '../../context/AuthContext'
 
 const QuizTakePage = () => {
   const {quizId} = useParams()
+  const {handleNotification} = useAuth()
   const navigate = useNavigate()
   const [quiz, setQuiz] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -23,6 +25,7 @@ const QuizTakePage = () => {
         setQuiz(response.data[0])
       } catch (error) {
         toast.error("Failed to fetch quiz.")
+        handleNotification("Failed to fetch quiz.")
         console.error(error)
       }finally{
         setLoading(false)
@@ -79,9 +82,11 @@ const QuizTakePage = () => {
 
       await quizService.submitQuiz(quizId, formattedAnswers)
       toast.success('Quiz submitted successfully!')
+      handleNotification('Quiz submitted successfully!')
       navigate(`/quiz/${quizId}/results`)
     } catch (error) {
       toast.error(error.message || 'Failed to submit quiz.')
+      handleNotification(error.message || 'Failed to submit quiz.')
     }finally{
       setSubmitting(false)
     }

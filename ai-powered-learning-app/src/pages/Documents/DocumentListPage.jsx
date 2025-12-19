@@ -4,10 +4,12 @@ import toast from "react-hot-toast"
 import documentService from '../../services/documentService.js'
 import Button from '../../components/common/Button.jsx'
 import DocumentCard from '../../components/documents/DocumentCard.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const DocumentListPage = () => {
   const [documents, setDocuments] = useState([])
   const [loading, setLoading] = useState(true)
+  const {handleNotification} = useAuth()
 
   const [isUplodaModalOpen, setIsUploadModalOpen] = useState(false)
   const [uploadFile, setUploadFile] = useState(null)
@@ -24,6 +26,7 @@ const DocumentListPage = () => {
       setDocuments(data.data)
     } catch (error) {
       toast.error("Failed to fetch documents" )
+      handleNotification("Failed to fetch documents")
     }finally{
       setLoading(false)
     }
@@ -45,6 +48,7 @@ const DocumentListPage = () => {
     e.preventDefault()
     if(!uploadFile || !uploadTitle){
       toast.error("Please provide a title and select a file")
+      handleNotification("Please provide a title and select a file")
       return
     }
     setUploading(true)
@@ -55,6 +59,7 @@ const DocumentListPage = () => {
     try {
       await documentService.uploadDocument(formData)
       toast.success("Document uploaded successfully")
+      handleNotification("Document uploaded successfully")
       setIsUploadModalOpen(false)
       setUploadFile(null)
       setUploadTitle("")
@@ -63,6 +68,7 @@ const DocumentListPage = () => {
 
     } catch (error) {
       toast.error(error.message || "Upload failed")
+      handleNotification(error.message || "Upload failed")
     }finally{
       setUploading(false)
     }
@@ -80,11 +86,13 @@ const DocumentListPage = () => {
     try {
       await documentService.deleteDocuments(selectedDoc._id)
       toast.success(`${selectedDoc.title} deleted.`)
+      handleNotification(`${selectedDoc.title} deleted.`)
       setIsDeleteModalOpen(false)
       setSelectedDoc(null)
       setDocuments(documents.filter((d) => d._id !== selectedDoc._id))
     } catch (error) {
       toast.error(error.message || "Failed to delete document")
+      handleNotification(error.message || "Failed to delete document")
     }finally{
       setDeleting(false)
     }

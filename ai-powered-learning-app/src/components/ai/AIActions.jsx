@@ -5,6 +5,7 @@ import aiService from "../../services/aiService.js"
 import toast from 'react-hot-toast'
 import MarkdownRenderer from '../common/MarkdownRenderer.jsx'
 import Modal from '../../components/common/Modal.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const AIActions = () => {
 
@@ -14,6 +15,7 @@ const AIActions = () => {
     const [modalContent, setModlaContent] = useState("")
     const [modalTitle, setModalTitle] = useState("")
     const [concept, setConcept] = useState("")
+    const {handleNotification} = useAuth()
 
     const handleGenerateSummary = async() => {
         setLoadingAction("summary")
@@ -24,6 +26,7 @@ const AIActions = () => {
             setIsModalOpen(true)
         } catch (error) {
             toast.error("Failed to generate summary")
+            handleNotification("Failed to generate summary")
         }finally{
             setLoadingAction(null)
         }
@@ -33,6 +36,7 @@ const AIActions = () => {
         e.preventDefault()
         if(!concept.trim()){
             toast.error("please enter a concept to explain")
+            handleNotification("please enter a concept to explain")
             return
         }
         setLoadingAction("explain")
@@ -45,6 +49,7 @@ const AIActions = () => {
             setConcept("")
         } catch (error) {
             toast.error("Failed to generate summary")
+            handleNotification("Failed to generate summary")
         }finally{
             setLoadingAction(null)
         }

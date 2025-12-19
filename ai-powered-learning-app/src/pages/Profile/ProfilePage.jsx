@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { User, Mail, Lock } from 'lucide-react'
 
 
+
 const ProfilePage = () => {
 
   const [loading, setLoading] =useState(true)
@@ -16,6 +17,7 @@ const ProfilePage = () => {
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword]  =useState("")
   const [confirmNewPassword, setConfirmNewPassword] = useState("")
+  const {handleNotification} = useAuth()
 
   useEffect(() => {
 
@@ -26,6 +28,7 @@ const ProfilePage = () => {
         setEmail(data.email)
       } catch (error) {
         toast.error("Failed to fetch profile data")
+        handleNotification("Failed to fetch profile data")
         console.error(error)
       }finally{
         setLoading(false)
@@ -38,21 +41,25 @@ const ProfilePage = () => {
     e.preventDefault()
     if(newPassword !== confirmNewPassword){
       toast.error("New passwords do not match")
+      handleNotification("New passwords do not match")
       return
     }
     if(newPassword.length < 6){
       toast.error("New password must be at least 6 characters long")
+      handleNotification("New password must be at least 6 characters long")
       return
     }
     setPasswordLoading(true)
     try {
       await authService.changePassword(currentPassword, newPassword)
       toast.success("Password changed successfully!")
+      handleNotification("Password changed successfully!")
       setCurrentPassword("")
       setNewPassword("")
       setConfirmNewPassword("")
     } catch (error) {
       toast.error("Password not updated")
+      handleNotification("Password not updated")
       console.log(error)
     }finally{
       setPasswordLoading(false)

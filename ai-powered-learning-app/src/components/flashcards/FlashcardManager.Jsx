@@ -7,6 +7,7 @@ import flashcardService from '../../services/flashcardService.js'
 import aiService from '../../services/aiService.js'
 import Modal from '../common/Modal.jsx'
 import Flashcard from './Flashcard.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 
 const FlashcardManager = ({documentId}) => {
@@ -18,6 +19,7 @@ const FlashcardManager = ({documentId}) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [setToDelete, setSetToDelete] = useState(null)
+  const {handleNotification} = useAuth()
 
   const fetchFlashingcardSets = async() => {
     setLoading(true)
@@ -26,6 +28,7 @@ const FlashcardManager = ({documentId}) => {
       setFlashcardSets(response.data)
     } catch (error) {
       toast.error("Failded to fetch flashcard sets.")
+      handleNotification("Failded to fetch flashcard sets.")
       console.log("Failed to fetch flashcard sets.")
     }finally{
       setLoading(false)
@@ -43,9 +46,11 @@ const FlashcardManager = ({documentId}) => {
     try {
       await aiService.generateFlashcards(documentId, 10)
       toast.success("Flascards generated successfully!")
+      handleNotification("Flascards generated successfully!")
       fetchFlashingcardSets();
     } catch (error) {
       toast.error(error.message || "Failed to generate flashcards")
+      handleNotification(error.message || "Failed to generate flashcards")
     }finally{
       setGenerating(false)
     }
@@ -72,8 +77,10 @@ const FlashcardManager = ({documentId}) => {
     try {
       await flashcardService.reviewFlashcard(currentCard._id, index)
       toast.success("Flashcard reviewed!")
+      handleNotification("Flashcard reviewed!")
     } catch (error) {
       toast.error("Failed to review flashcard.")
+      handleNotification("Failed to review flashcard.")
     }
   }
 
@@ -91,8 +98,10 @@ const FlashcardManager = ({documentId}) => {
     setFlashcardSets(updatedSets)
     setSelectedSet(updatedSets.find((set)=> set._id === selectedSet._id))
     toast.success("Flashcard starred status updated!")
+    handleNotification("Flashcard starred status updated!")
     } catch (error) {
       toast.error("Failed to update star status")
+      handleNotification("Failed to update star status")
     }
   }
 
@@ -109,11 +118,13 @@ const FlashcardManager = ({documentId}) => {
     try {
       await flashcardService.deleteFlashcardSet(setToDelete._id)
       toast.success("Flashcard set deleted successfully!")
+      handleNotification("Flashcard set deleted successfully!")
       setIsDeleteModalOpen(false)
       setSetToDelete(null)
       fetchFlashingcardSets()
     } catch (error) {
       toast.error(error.message || "Failde to delte flashcard set")
+      handleNotification(error.message || "Failde to delte flashcard set")
     }finally{
       setDeleting(true)
     }

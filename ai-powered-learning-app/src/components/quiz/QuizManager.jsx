@@ -7,10 +7,12 @@ import Button from '../common/Button.jsx'
 import Modal from '../common/Modal.jsx'
 import QuizCard from './QuizCard.jsx'
 import EmptyState from '../common/EmptyState.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const QuizManager = ({documentId}) => {
 
     const [quizs, setQuizs] = useState([])
+    const {handleNotification} = useAuth()
     const [loading, setLoading] = useState(true)
     const [generating, setGenerating] = useState(false)
     const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false)
@@ -26,6 +28,7 @@ const QuizManager = ({documentId}) => {
             setQuizs(data.data)
         } catch (error) {
             toast.error("Failed to fetch quiz")
+            handleNotification("Failed to fetch quiz")
             console.error(error)
         }finally{
             setLoading(false)
@@ -43,10 +46,12 @@ const QuizManager = ({documentId}) => {
         try {
             await aiService.generateQuiz(documentId, numQuestions, "Quiz")
             toast.success('Quiz generated successfully!')
+            handleNotification('Quiz generated successfully!')
             setIsGenerateModalOpen(false)
             fetchQuiz()
         } catch (error) {
             toast.error(error.message || "Failed to generate quiz")
+            handleNotification(error.message || "Failed to generate quiz")
         } finally{
             setGenerating(false)
         }
@@ -63,11 +68,13 @@ const QuizManager = ({documentId}) => {
         try {
             await quizService.deleteQuiz(selectedQuiz._id)
             toast.success(`${selectedQuiz.title || 'Quiz'} deleted.`)
+            handleNotification(`${selectedQuiz.title || 'Quiz'} deleted.`)
             setIsDeleteModalOpen(false)
             setSelectedQuiz(null)
             setQuizs(quizs.filter(q => q._id !== selectedQuiz._id))
         } catch (error) {
             toast.error(error.message || 'Failed to delete quiz')
+            handleNotification(error.message || 'Failed to delete quiz')
         }finally{
             setDeleting(false)
         }

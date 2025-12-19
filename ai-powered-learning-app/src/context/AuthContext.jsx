@@ -17,6 +17,22 @@ export const AuthProvider = ({children}) => {
     const [email, setEmail] = useState(null)
     const [loading, setLoading] = useState(true)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [notif, setNotif] = useState([])
+
+
+    const handleNotification = (notification) => {
+        setNotif((prev) => {
+        const updated = [...prev, notification];
+
+        // keep only last 10 (FIFO: remove from start)
+        if (updated.length > 10) {
+        updated.shift();
+        }
+
+        return updated;
+    });
+    };
+
 
     useEffect(() => {
         checkAuthStatus()
@@ -70,6 +86,8 @@ export const AuthProvider = ({children}) => {
 
     const value = {
         user,
+        notif,
+        handleNotification,
         email,
         loading,
         isAuthenticated,
