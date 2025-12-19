@@ -133,7 +133,6 @@ export const deleteDocument = async (req, res, next) => {
             })
         }
 
-        await fs.unlink(document.filePath).catch((error) => console.log(error))
 
         await document.deleteOne()
 
