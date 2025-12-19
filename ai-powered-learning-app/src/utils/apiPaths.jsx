@@ -1,12 +1,12 @@
-export const BASE_URL = "http://localhost:5000"
+export const BASE_URL = "https://ai-learning-assistant-5icw.vercel.app"
 
 export const API_PATHS = {
     AUTH: {
-        REGISTER: "api/auth/register" ,
-        LOGIN: "api/auth/login",
-        GET_PROFILE: "api/auth/profile",
-        UPDATE_PROFILE: "api/auth/profile",
-        CHANGE_PASSWORD: "api/auth/change-password",
+        REGISTER: "/api/auth/register" ,
+        LOGIN: "/api/auth/login",
+        GET_PROFILE: "/api/auth/profile",
+        UPDATE_PROFILE: "/api/auth/profile",
+        CHANGE_PASSWORD: "/api/auth/change-password",
     },
     DOCUMENTS: {
         UPLOAD: "/api/documents/upload",
