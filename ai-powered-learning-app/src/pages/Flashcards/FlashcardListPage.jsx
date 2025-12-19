@@ -45,6 +45,7 @@ const FlashcardListPage = () => {
     return (
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
         {flashcardSets.map((set)=>{
+          if(set.documentId.title === undefined) return
           return <FlashcardSetCard key={set._id} flashcard={set} />
         })}
       </div>
