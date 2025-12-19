@@ -3,12 +3,12 @@ import { useParams, Link } from 'react-router-dom'
 import documentService from '../../services/documentService'
 import toast from 'react-hot-toast'
 import {ArrowLeft, ExternalLink} from 'lucide-react'
-import PageHeader from '../../components/common/PageHeader'
-import Tabs from '../../components/common/Tabs'
-import AIActions from '../../components/ai/AIActions'
-import QuizManager from '../../components/quiz/QuizManager'
-import FlashcardManager from '../../components/flashcards/FlashcardManager'
-import ChatInterface from '../../components/chat/ChatInterface'
+import PageHeader from '../../components/common/PageHeader.jsx'
+import Tabs from '../../components/common/Tabs.jsx'
+import AIActions from '../../components/ai/AIActions.jsx'
+import QuizManager from '../../components/quiz/QuizManager.jsx'
+import FlashcardManager from '../../components/flashcards/FlashcardManager.jsx'
+import ChatInterface from '../../components/chat/ChatInterface.jsx'
 
 const DocumentDetailPage = () => {
 
