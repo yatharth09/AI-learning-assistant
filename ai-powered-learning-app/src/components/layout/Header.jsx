@@ -52,7 +52,7 @@ const Header = ({toggle}) => {
     border-slate-200
     p-4
     space-y-2
-    overflow-hidden
+    overflow-y-auto
   "
 >
     <h1 className='text-lg font-semibold text-slate-800 tracking-tight mb-3'>Notifications</h1>

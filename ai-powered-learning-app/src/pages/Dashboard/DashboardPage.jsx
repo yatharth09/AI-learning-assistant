@@ -25,6 +25,10 @@ const DashboardPage = () => {
     fetchDashboardData()
   }, [])
 
+  useEffect(() => {
+    console.log(dashboardData)
+  },[dashboardData])
+
   if(loading) return <>Loading</>
 
   if(!dashboardData || !dashboardData.overview){
@@ -104,15 +108,49 @@ const DashboardPage = () => {
                  <h3 className="text-xl fonr-medium text-slate-900 tracking-tight">Recent Activity</h3>
                </div>
 
-               {dashboardData.recentActivity && (dashboardData.recentActivity.length > 0 || dashboardData.recentActivity.quiz.length > 0)? 
+               {dashboardData.recentActivity && (dashboardData.recentActivity.document.length > 0 || dashboardData.recentActivity.quiz.length > 0)? 
               <div className="space-y-3">
                 {[
-                  ...(dashboardData.recentActivity.documents || []).map(doc => ({
+                  ...(dashboardData.recentActivity.document || []).map(doc => ({
                     id: doc._id,
                     description: doc.title,
                     timestamp: doc.lastAccessed,
-                    link: `/documents/${doc._id}`,
-                    type: 'quiz'
+                    link: `/document/${doc._id}`,
+                    type: 'document'
+                  }))
+                ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((activity, key) => (
+                  <div
+                    key={activity.id || key}
+                    className="group flex items-center justify-between p-4 rounded-xl bg-slate-50/50 border border-slate-200/60 hover:bg-white hover:border-slate-300/60 hover:shadow-md transition-all duration-200"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className={`w-2 h-2 rounded-full ${
+                          activity.type === 'document'? 'bg-linear-to-r from-blue-400 to-cyan-500' : 'bg-linear-to-r from-emerald-400 to-teal-500'
+                        }`} />
+
+                      <p className="text-sm font-medium text-slate-900 truncate">
+                        {activity.type === 'document'? 'Accessed Document: ' : 'Attempted Quiz: '}
+                        <span className="text-slate-700">{activity.description}</span>  
+                      </p>  
+
+                      </div>
+                      <p className="text-xs text-slate-500 pl-4">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                      {/* {activity.link && (
+                        <a href={activity.link} className="ml-4 px-4 py-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200 whitespace-nowrap">View</a>
+                      )} */}
+                  </div>
+                ))}{[
+                  ...(dashboardData.recentActivity.quiz || []).map(q => ({
+                    id: q._id,
+                    description: q.title,
+                    timestamp: q.lastAccessed,
+                    link: `/document/${q._id}`,
+                    type: 'quiz',
+                    score: q.score
                   }))
                 ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((activity, key) => (
                   <div
@@ -136,7 +174,7 @@ const DashboardPage = () => {
                       </p>
                     </div>
                       {activity.link && (
-                        <a href={activity.link} className="ml-4 px-4 py-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200 whitespace-nowrap">View</a>
+                        <a className="ml-4 px-4 py-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200 whitespace-nowrap">Score: {activity.score}</a>
                       )}
                   </div>
                 ))}
